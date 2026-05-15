@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GitHub-inspired theme tokens — exposed as CSS variables so Shadcn primitives,
+   Tailwind utilities, and ad-hoc styling all share the same palette. */
+@layer base {
+  :root {
+    --gh-canvas: 255 255 255;
+    --gh-canvas-subtle: 246 248 250;
+    --gh-surface: 255 255 255;
+    --gh-border: 208 215 222;
+    --gh-border-muted: 216 222 228;
+    --gh-fg-default: 31 35 40;
+    --gh-fg-muted: 101 109 118;
+    --gh-fg-subtle: 110 119 129;
+    --gh-accent: 9 105 218;
+    --gh-accent-fg: 255 255 255;
+    --gh-accent-emphasis: 8 95 198;
+    --gh-success: 26 127 55;
+    --gh-danger: 207 34 46;
+    --gh-warning: 154 103 0;
+
+    --radius: 0.5rem;
+    color-scheme: light;
+  }
+
+  .dark {
+    --gh-canvas: 13 17 23;
+    --gh-canvas-subtle: 22 27 34;
+    --gh-surface: 22 27 34;
+    --gh-border: 48 54 61;
+    --gh-border-muted: 33 38 45;
+    --gh-fg-default: 230 237 243;
+    --gh-fg-muted: 125 133 144;
+    --gh-fg-subtle: 110 118 129;
+    --gh-accent: 47 129 247;
+    --gh-accent-fg: 255 255 255;
+    --gh-accent-emphasis: 31 111 235;
+    --gh-success: 63 185 80;
+    --gh-danger: 248 81 73;
+    --gh-warning: 210 153 34;
+
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: rgb(var(--gh-canvas));
+    color: rgb(var(--gh-fg-default));
+  }
+
+  *,
+  *::before,
+  *::after {
+    border-color: rgb(var(--gh-border));
+  }
+
+  ::selection {
+    background: rgb(var(--gh-accent) / 0.25);
+  }
+}
+
+@layer components {
+  .gh-card {
+    @apply bg-surface border border-border rounded-lg shadow-sm;
+  }
+}
