@@ -1,0 +1,59 @@
+# podman-compose compatible stack for Rentomojo clone.
+# Usage:
+#   podman-compose up --build
+#   podman-compose down -v
+version: "3.9"
+
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    container_name: rentomojo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rentomojo
+      POSTGRES_PASSWORD: rentomojo
+      POSTGRES_DB: rentomojo
+    ports:
+      - "5432:5432"
+    volumes:
+      - rentomojo_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rentomojo -d rentomojo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Containerfile
+    container_name: rentomojo-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      DATABASE_URL: postgresql://rentomojo:rentomojo@db:5432/rentomojo?schema=public
+      JWT_SECRET: change-me-in-production
+      JWT_EXPIRES_IN: 7d
+      LOG_LEVEL: info
+      CORS_ORIGIN: "http://localhost:5173"
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Containerfile
+    container_name: rentomojo-client
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  rentomojo_pg:
+
