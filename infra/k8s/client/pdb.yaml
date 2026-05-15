@@ -1,0 +1,13 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: client-pdb
+  namespace: rentomojo
+  labels:
+    app.kubernetes.io/name: client
+    app.kubernetes.io/part-of: rentomojo
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: rentomojo-client

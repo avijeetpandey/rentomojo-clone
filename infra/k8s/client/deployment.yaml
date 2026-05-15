@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rentomojo-client
+  namespace: rentomojo
+  labels:
+    app.kubernetes.io/name: client
+    app.kubernetes.io/part-of: rentomojo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rentomojo-client
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: rentomojo-client
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: client
+          # Replace with your registry image after `podman build -t registry/rentomojo-client:latest ./client`
+          image: ghcr.io/your-org/rentomojo-client:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5173
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5173
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5173
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 101   # nginx user
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["CHOWN", "SETUID", "SETGID"]

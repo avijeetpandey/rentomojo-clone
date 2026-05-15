@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  namespace: rentomojo
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: rentomojo
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  type: ClusterIP

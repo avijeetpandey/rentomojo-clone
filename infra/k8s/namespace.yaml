@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rentomojo
+  labels:
+    app.kubernetes.io/name: rentomojo
+    app.kubernetes.io/managed-by: kubectl

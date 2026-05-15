@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rentomojo-ingress
+  namespace: rentomojo
+  labels:
+    app.kubernetes.io/name: ingress
+    app.kubernetes.io/part-of: rentomojo
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-body-size: "4m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+    # Enable TLS via cert-manager (comment out if not using cert-manager):
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - rentomojo.example.com
+      secretName: rentomojo-tls
+  rules:
+    - host: rentomojo.example.com
+      http:
+        paths:
+          # All /api/* and /health traffic routed to the backend.
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: backend-svc
+                port:
+                  number: 4000
+          - path: /health
+            pathType: Exact
+            backend:
+              service:
+                name: backend-svc
+                port:
+                  number: 4000
+          # Everything else served by the React SPA (nginx handles client-side routing).
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: client-svc
+                port:
+                  number: 80
