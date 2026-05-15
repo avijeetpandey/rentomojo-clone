@@ -1,0 +1,166 @@
+// Rentomojo clone — Prisma schema (Phase 2).
+// Covers: Users + auth, Categories, Products with tenure pricing,
+// Cart (one per user) with CartItems, and Orders + OrderItems for checkout.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum KycStatus {
+  NOT_SUBMITTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  ACTIVE
+  CANCELLED
+  COMPLETED
+}
+
+enum RentalTenure {
+  M1
+  M3
+  M6
+  M12
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  city         String     @default("Bangalore")
+  role         UserRole   @default(CUSTOMER)
+  kycStatus    KycStatus  @default(NOT_SUBMITTED)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  cart   Cart?
+  orders Order[]
+
+  @@index([email])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  iconName    String?
+  createdAt   DateTime  @default(now())
+  products    Product[]
+}
+
+model Product {
+  id              String     @id @default(cuid())
+  slug            String     @unique
+  name            String
+  description     String
+  imageUrl        String
+  city            String     @default("Bangalore")
+  categoryId      String
+  category        Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  // Pricing — base monthly rent, deposit, and discount multipliers per tenure.
+  baseMonthlyRent Int
+  depositAmount   Int
+  discount3M      Float      @default(0.00)
+  discount6M      Float      @default(0.05)
+  discount12M     Float      @default(0.10)
+
+  stock           Int        @default(10)
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([city, categoryId])
+  @@index([isActive])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String       @id @default(cuid())
+  cartId    String
+  cart      Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int          @default(1)
+  tenure    RentalTenure @default(M3)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([cartId, productId, tenure])
+}
+
+model Order {
+  id              String       @id @default(cuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          OrderStatus  @default(PENDING_PAYMENT)
+
+  // Snapshotted financials
+  subtotal        Int
+  depositTotal    Int
+  totalDueNow     Int
+  monthlyTotal    Int
+
+  // Delivery address snapshot
+  addressLine1    String
+  addressLine2    String?
+  city            String
+  state           String
+  pincode         String
+  contactPhone    String
+
+  // KYC snapshot (Phase 5 finalizes the doc upload flow).
+  kycDocumentRef  String?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  items           OrderItem[]
+
+  @@index([userId, status])
+}
+
+model OrderItem {
+  id            String       @id @default(cuid())
+  orderId       String
+  order         Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product      @relation(fields: [productId], references: [id])
+  productName   String
+  quantity      Int
+  tenure        RentalTenure
+  monthlyRent   Int
+  depositAmount Int
+  monthsCount   Int
+
+  @@index([orderId])
+}
