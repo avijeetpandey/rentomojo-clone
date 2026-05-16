@@ -6,7 +6,6 @@ A modern, full-stack clone of the Rentomojo rental marketplace, built as a portf
 - **API** — Node.js + TypeScript + Express + Prisma + PostgreSQL with JWT auth and structured logging.
 - **Infra** — Podman-first containers (`Containerfile` + `podman-compose`), with raw Kubernetes manifests for production.
 
-> ⚙️ This repository is being built in **6 phases**. Phase 1 (this commit) wires up the entire infrastructure scaffold so the stack can be booted with a single command.
 
 ---
 
@@ -17,11 +16,11 @@ rentomojo-clone/
 ├── backend/            # Express + Prisma API (TypeScript)
 │   ├── src/
 │   │   ├── config/         # Env loading
-│   │   ├── controllers/    # HTTP handlers      (Phase 2+)
-│   │   ├── services/       # Business logic     (Phase 2+)
-│   │   ├── repositories/   # Prisma access      (Phase 2+)
+│   │   ├── controllers/    # HTTP handlers      
+│   │   ├── services/       # Business logic    
+│   │   ├── repositories/   # Prisma access      
 │   │   ├── middleware/     # Auth, error handler
-│   │   ├── routes/         # Route mounting     (Phase 2+)
+│   │   ├── routes/         # Route mounting     
 │   │   ├── utils/          # Logger, HttpError
 │   │   ├── app.ts          # Express app factory
 │   │   └── server.ts       # HTTP bootstrap
@@ -33,7 +32,7 @@ rentomojo-clone/
 │   ├── electron/           # Electron main + preload
 │   └── Containerfile       # Static-bundle image (nginx)
 ├── infra/
-│   └── k8s/                # Kubernetes manifests (Phase 6)
+│   └── k8s/                # Kubernetes manifests 
 ├── compose.yaml        # podman-compose stack (db + backend + client)
 ├── Makefile            # `make run` one-click bootstrap
 └── README.md
@@ -154,10 +153,6 @@ make test-backend
 make test-client
 ```
 
-Phase 1 ships:
-
-- `backend/tests/health.test.ts` — exercises the Express app factory, 200 health route, and 404 handler.
-
 ---
 
 ## Container & deployment notes
@@ -168,20 +163,3 @@ Phase 1 ships:
 - Kubernetes manifests live in `infra/k8s/` (populated in Phase 6 with `Deployment`, `Service`, `ConfigMap`, `Secret`, and `Ingress` objects).
 
 ---
-
-## Roadmap
-
-| Phase | Scope                                                                                          | Status         |
-| ----- | ---------------------------------------------------------------------------------------------- | -------------- |
-| 1     | Infra & base setup — repo skeleton, Containerfiles, compose, Makefile, README.                 | ✅ Complete    |
-| 2     | Prisma schema, auth (`/register`, `/login`, JWT middleware), error/logging plumbing, tests.    | ✅ Complete    |
-| 3     | Frontend Vite/Electron entry, Shadcn + Toast, GitHub theme system, Login & Register screens.   | ✅ Complete    |
-| 4     | Product catalog, city selector, cart APIs + UI, dynamic tenure pricing.                        | ✅ Complete    |
-| 5     | Checkout, mock KYC, order creation, user dashboard with active rentals.                        | ✅ Complete    |
-| 6     | Test coverage hardening, full Kubernetes manifests, placeholder sweep.                         | ✅ Complete    |
-
----
-
-## License
-
-MIT — for educational/portfolio use. "Rentomojo" is a trademark of its respective owners; this project is an independent clone and is not affiliated with or endorsed by Rentomojo.
