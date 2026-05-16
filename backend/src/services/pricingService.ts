@@ -1,4 +1,4 @@
-import type { RentalTenure } from '@prisma/client';
+import type { RentalTenure } from '../generated/prisma';
 
 export const TENURE_MONTHS: Record<RentalTenure, number> = {
   M1: 1,

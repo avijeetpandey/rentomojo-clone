@@ -1,4 +1,4 @@
-import { type Prisma, type User } from '@prisma/client';
+import { type Prisma, type User } from '../generated/prisma';
 import { prisma } from '../config/prisma';
 
 export const userRepository = {

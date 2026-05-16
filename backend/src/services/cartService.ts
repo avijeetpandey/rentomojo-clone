@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { RentalTenure } from '@prisma/client';
+import type { RentalTenure } from '../generated/prisma';
 import { cartRepository } from '../repositories/cartRepository';
 import { productRepository } from '../repositories/productRepository';
 import { HttpError } from '../utils/httpError';

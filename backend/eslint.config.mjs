@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'node_modules/**', 'prisma/migrations/**'] },
+  { ignores: ['dist/**', 'node_modules/**', 'prisma/migrations/**', 'src/generated/**'] },
   // Source files — full type-aware linting
   {
     files: ['src/**/*.ts'],

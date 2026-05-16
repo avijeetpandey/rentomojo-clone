@@ -1,4 +1,4 @@
-import { Prisma, type RentalTenure } from '@prisma/client';
+import { Prisma, type RentalTenure } from '../generated/prisma';
 import { prisma } from '../config/prisma';
 
 export const cartRepository = {

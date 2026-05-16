@@ -1,4 +1,4 @@
-import type { KycStatus } from '@prisma/client';
+import type { KycStatus } from '../generated/prisma';
 import { prisma } from '../config/prisma';
 
 export const kycRepository = {

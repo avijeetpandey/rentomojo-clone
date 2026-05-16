@@ -1,6 +1,6 @@
 // Full catalog seed — admin/demo users, all categories, and products for every city.
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma';
 
 const prisma = new PrismaClient();
 

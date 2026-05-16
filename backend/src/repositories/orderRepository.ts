@@ -1,4 +1,4 @@
-import { type Prisma, type OrderStatus, type RentalTenure } from '@prisma/client';
+import { type Prisma, type OrderStatus, type RentalTenure } from '../generated/prisma';
 import { prisma } from '../config/prisma';
 
 export interface CreateOrderItemInput {
